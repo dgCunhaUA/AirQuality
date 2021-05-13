@@ -1,0 +1,7 @@
+ua/tqs/airquality/SearchForCity_Selenium.class
+ua/tqs/airquality/controller/AirQualityController_WithMockServiceTest.class
+ua/tqs/airquality/service/ServiceConvertersTest.class
+ua/tqs/airquality/controller/AirQualityRestController_WithMockServiceTest.class
+ua/tqs/airquality/model/CacheTest.class
+ua/tqs/airquality/service/AirQualityServiceTest.class
+ua/tqs/airquality/repository/AmbeeRepositoryTest.class

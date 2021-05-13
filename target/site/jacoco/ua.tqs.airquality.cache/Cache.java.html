@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cache.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">airquality</a> &gt; <a href="index.source.html" class="el_package">ua.tqs.airquality.cache</a> &gt; <span class="el_source">Cache.java</span></div><h1>Cache.java</h1><pre class="source lang-java linenums">package ua.tqs.airquality.cache;
+
+import ua.tqs.airquality.model.AirQuality;
+import ua.tqs.airquality.model.City;
+
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class Cache {
+
+    private long timeToLive;
+<span class="fc" id="L13">    private int numOfRequests = 0;</span>
+<span class="fc" id="L14">    private int numOfHits = 0;</span>
+<span class="fc" id="L15">    private int numOfMisses = 0;</span>
+    private HashMap&lt;City, AirQuality&gt; lastRequests ;
+    private HashMap&lt;City, Long&gt; expiredRequests ;
+
+<span class="fc" id="L19">    private final static Logger LOGGER =  Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);</span>
+
+<span class="fc" id="L21">    public Cache(long expireTime) {</span>
+<span class="fc" id="L22">        this.lastRequests = new HashMap&lt;City, AirQuality&gt;();</span>
+<span class="fc" id="L23">        this.expiredRequests = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L24">        this.timeToLive = expireTime;</span>
+<span class="fc" id="L25">    }</span>
+
+
+    public void storeRequest(City city, AirQuality airQuality) {
+<span class="fc" id="L29">        LOGGER.log(Level.INFO, &quot;Storing Request ...&quot;);</span>
+<span class="fc" id="L30">        this.lastRequests.put(city, airQuality);</span>
+<span class="fc" id="L31">        this.expiredRequests.put(city, System.currentTimeMillis() + timeToLive * 1000);</span>
+<span class="fc" id="L32">        LOGGER.log(Level.INFO, &quot;Requests stored&quot;);</span>
+<span class="fc" id="L33">    }</span>
+
+    public HashMap&lt;City, AirQuality&gt; getRequest(Cache cache, String city) {
+<span class="fc" id="L36">        LOGGER.log(Level.INFO, &quot;Getting Request ...&quot;);</span>
+<span class="fc" id="L37">        HashMap&lt;City, AirQuality&gt; data = new HashMap&lt;&gt;();</span>
+
+        // Incr number os Request
+<span class="fc" id="L40">        requestsIncr();</span>
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (City i : cache.getLastRequests().keySet()) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            if( i.getName().substring(1, i.getName().length() - 1).equals(city) ) {</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                if ( hasExpired(i) ) {</span>
+<span class="fc" id="L46">                    removeExpiredRequest(i);</span>
+                } else {
+<span class="fc" id="L48">                    data.put(i, cache.getLastRequests().get(i));</span>
+
+<span class="fc" id="L50">                    hitsIncr();</span>
+<span class="fc" id="L51">                    return data;</span>
+                }
+
+            }
+<span class="fc" id="L55">        }</span>
+
+<span class="fc" id="L57">        missesIncr();</span>
+<span class="fc" id="L58">        return data;</span>
+    }
+
+    public HashMap&lt;City, AirQuality&gt; getRequestLatLng(Cache cache, String lat, String lng) {
+<span class="fc" id="L62">        LOGGER.log(Level.INFO, &quot;Getting Request ...&quot;);</span>
+<span class="fc" id="L63">        HashMap&lt;City, AirQuality&gt; data = new HashMap&lt;&gt;();</span>
+
+        // Incr number os Request
+<span class="fc" id="L66">        requestsIncr();</span>
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (City i : cache.getLastRequests().keySet()) {</span>
+<span class="pc bpc" id="L69" title="1 of 4 branches missed.">            if( i.getLat().equals(lat) &amp;&amp; i.getLng().equals(lng) ) {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                if ( hasExpired(i) ) {</span>
+<span class="fc" id="L71">                    LOGGER.log(Level.INFO, &quot;Expired ...&quot;);</span>
+<span class="fc" id="L72">                    removeExpiredRequest(i);</span>
+                } else {
+<span class="fc" id="L74">                    data.put(i, cache.getLastRequests().get(i));</span>
+
+<span class="fc" id="L76">                    hitsIncr();</span>
+<span class="fc" id="L77">                    return data;</span>
+                }
+            }
+<span class="fc" id="L80">        }</span>
+
+<span class="fc" id="L82">        missesIncr();</span>
+<span class="fc" id="L83">        return data;</span>
+    }
+
+<span class="fc" id="L86">    public void requestsIncr() { numOfRequests++; }</span>
+
+<span class="fc" id="L88">    public void hitsIncr() { numOfHits++; }</span>
+
+<span class="fc" id="L90">    public void missesIncr() { numOfMisses++; }</span>
+
+    private boolean hasExpired(City city) {
+<span class="fc" id="L93">        Long expireTime = expiredRequests.get(city);</span>
+
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        return System.currentTimeMillis() &gt; expireTime;</span>
+    }
+
+    private void removeExpiredRequest(City city) {
+<span class="fc" id="L99">        LOGGER.log(Level.INFO, &quot;Removing Expired Requests ...&quot;);</span>
+
+<span class="fc" id="L101">        lastRequests.remove(city);</span>
+<span class="fc" id="L102">        expiredRequests.remove(city);</span>
+
+<span class="fc" id="L104">        LOGGER.log(Level.INFO, &quot;Expired Requests Removed&quot;);</span>
+<span class="fc" id="L105">    }</span>
+
+    public long getTimeToLive() {
+<span class="fc" id="L108">        return timeToLive;</span>
+    }
+
+    public void setTimeToLive(long timeToLive) {
+<span class="fc" id="L112">        this.timeToLive = timeToLive;</span>
+<span class="fc" id="L113">    }</span>
+
+    public int getNumOfRequests() {
+<span class="fc" id="L116">        return numOfRequests;</span>
+    }
+
+    public void setNumOfRequests(int numOfRequests) {
+<span class="fc" id="L120">        this.numOfRequests = numOfRequests;</span>
+<span class="fc" id="L121">    }</span>
+
+    public int getNumOfHits() {
+<span class="fc" id="L124">        return numOfHits;</span>
+    }
+
+    public void setNumOfHits(int numOfHits) {
+<span class="fc" id="L128">        this.numOfHits = numOfHits;</span>
+<span class="fc" id="L129">    }</span>
+
+    public int getNumOfMisses() {
+<span class="fc" id="L132">        return numOfMisses;</span>
+    }
+
+    public void setNumOfMisses(int numOfMisses) {
+<span class="fc" id="L136">        this.numOfMisses = numOfMisses;</span>
+<span class="fc" id="L137">    }</span>
+
+    public HashMap&lt;City, AirQuality&gt; getLastRequests() {
+<span class="fc" id="L140">        return lastRequests;</span>
+    }
+
+    public void setLastRequests(HashMap&lt;City, AirQuality&gt; cache) {
+<span class="fc" id="L144">        this.lastRequests = cache;</span>
+<span class="fc" id="L145">    }</span>
+
+    public HashMap&lt;City, Long&gt; getExpiredRequests() {
+<span class="fc" id="L148">        return expiredRequests;</span>
+    }
+
+    public void setExpiredRequests(HashMap&lt;City, Long&gt; expiredRequests) {
+<span class="fc" id="L152">        this.expiredRequests = expiredRequests;</span>
+<span class="fc" id="L153">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

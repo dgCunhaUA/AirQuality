@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AmbeeRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">airquality</a> &gt; <a href="index.source.html" class="el_package">ua.tqs.airquality.repository</a> &gt; <span class="el_source">AmbeeRepository.java</span></div><h1>AmbeeRepository.java</h1><pre class="source lang-java linenums">package ua.tqs.airquality.repository;
+
+import org.springframework.stereotype.Repository;
+import ua.tqs.airquality.model.City;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+@Repository
+<span class="fc" id="L17">public class AmbeeRepository {</span>
+
+    public String getCurrentAirQualityByCity(String city) throws IOException, InterruptedException {
+<span class="fc" id="L20">        HttpRequest request = HttpRequest.newBuilder()</span>
+<span class="fc" id="L21">                .uri(URI.create(&quot;https://api.ambeedata.com/latest/by-city?city=&quot; + city))</span>
+<span class="fc" id="L22">                .header(&quot;x-api-key&quot;, &quot;qjbhJdGl3w5bcR5Cyb07E7ymH3q29diM5mxLgGHg&quot;)</span>
+<span class="fc" id="L23">                .header(&quot;Content-type&quot;, &quot;application/json&quot;)</span>
+<span class="fc" id="L24">                .method(&quot;GET&quot;, HttpRequest.BodyPublishers.noBody())</span>
+<span class="fc" id="L25">                .build();</span>
+
+<span class="fc" id="L27">        HttpResponse&lt;String&gt; response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());</span>
+
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (response.statusCode() == 200)</span>
+<span class="fc" id="L30">            return response.body();</span>
+        else
+<span class="fc" id="L32">            return &quot;{\&quot;message\&quot;:\&quot;Error\&quot;}&quot;;</span>
+    }
+
+
+    public String getCurrentAirQualityByLatLng(String lat, String lng) throws IOException, InterruptedException {
+
+<span class="nc" id="L38">        HttpRequest request = HttpRequest.newBuilder()</span>
+<span class="nc" id="L39">                .uri(URI.create(&quot;https://api.ambeedata.com/latest/by-lat-lng?lat=&quot; + lat + &quot;&amp;lng=&quot; + lng ))</span>
+<span class="nc" id="L40">                .header(&quot;x-api-key&quot;, &quot;qjbhJdGl3w5bcR5Cyb07E7ymH3q29diM5mxLgGHg&quot;)</span>
+<span class="nc" id="L41">                .header(&quot;Content-type&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L42">                .method(&quot;GET&quot;, HttpRequest.BodyPublishers.noBody())</span>
+<span class="nc" id="L43">                .build();</span>
+<span class="nc" id="L44">        HttpResponse&lt;String&gt; response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());</span>
+<span class="nc" id="L45">        System.out.println(response.body());</span>
+
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (response.statusCode() == 200)</span>
+<span class="nc" id="L48">            return response.body();</span>
+        else
+<span class="nc" id="L50">            return &quot;{\&quot;message\&quot;:\&quot;Error\&quot;}&quot;;</span>
+    }
+
+
+    /*
+    public String getHistoricalAirQualityByCity(City city) throws IOException, InterruptedException {
+
+        DateFormat dateFormat = new SimpleDateFormat(&quot;yyyy/MM/dd&quot;);
+        Date date = new Date();
+        System.out.println(dateFormat.format(date));
+
+
+        System.out.println(city.getLat());
+        System.out.println(city.getLng());
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(&quot;https://api.ambeedata.com/history/by-lat-lng?lat=&quot; + city.getLat() + &quot;&amp;lng=&quot; + city.getLng() + &quot;&amp;from=2021-05-05&quot; + &quot;%2012%3A16%3A44&quot; + &quot;&amp;to=2021-05-12&quot; + &quot;%2012%3A16%3A44&quot;))
+                .header(&quot;x-api-key&quot;, &quot;qjbhJdGl3w5bcR5Cyb07E7ymH3q29diM5mxLgGHg&quot;)
+                .header(&quot;Content-type&quot;, &quot;application/json&quot;)
+                .method(&quot;GET&quot;, HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse&lt;String&gt; response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
+
+        if (response.statusCode() == 200)
+            return response.body();
+        else
+            return &quot;{\&quot;message\&quot;:\&quot;Error\&quot;}&quot;;
+    }*/
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

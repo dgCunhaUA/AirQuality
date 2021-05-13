@@ -1,0 +1,8 @@
+/home/cunha/Desktop/TQS/TQS/airquality/src/main/java/ua/tqs/airquality/controller/AirQualityRestController.java
+/home/cunha/Desktop/TQS/TQS/airquality/src/main/java/ua/tqs/airquality/model/AirQuality.java
+/home/cunha/Desktop/TQS/TQS/airquality/src/main/java/ua/tqs/airquality/service/AirQualityService.java
+/home/cunha/Desktop/TQS/TQS/airquality/src/main/java/ua/tqs/airquality/repository/AmbeeRepository.java
+/home/cunha/Desktop/TQS/TQS/airquality/src/main/java/ua/tqs/airquality/controller/AirQualityController.java
+/home/cunha/Desktop/TQS/TQS/airquality/src/main/java/ua/tqs/airquality/AirqualityApplication.java
+/home/cunha/Desktop/TQS/TQS/airquality/src/main/java/ua/tqs/airquality/model/City.java
+/home/cunha/Desktop/TQS/TQS/airquality/src/main/java/ua/tqs/airquality/cache/Cache.java

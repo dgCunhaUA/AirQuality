@@ -1,0 +1,136 @@
+body {
+    font-family: 'Times New Roman', serif;
+
+    background-color: #12232E;
+
+    /* Full height */
+    height: 100vh;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.title-container {
+    text-align: center;
+}
+
+.title {
+    font-weight: bolder;
+    color: white;
+}
+
+.form-container {
+    width: 40%;
+
+    text-align: center;
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 10px;
+
+    margin-top: 50px;
+}
+
+.search-text {
+    color: white;
+}
+
+input {
+    display:block;
+    width:100%;
+    padding:10px;
+
+    border-radius:10px;
+    border: 1px solid #eee;
+    transition: .3s border-color;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+}
+
+.return-btn {
+    background: none;
+    border: none;
+    text-align: center;
+}
+
+a.animated-button.thar-one {
+    width: 100px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    position: relative;
+    border: 2px solid #F7CA18;
+    transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0s;
+}
+a.animated-button.thar-one:hover {
+    color: #000 !important;
+    background-color: transparent;
+    text-shadow: none;
+}
+a.animated-button.thar-one:hover:before {
+    bottom: 0%;
+    top: auto;
+    height: 100%;
+}
+a.animated-button.thar-one:before {
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    height: 0px;
+    width: 100%;
+    z-index: -1;
+    content: '';
+    color: #000 !important;
+    background: #F7CA18;
+    transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0s;
+}
+
+hr {
+    color: white;
+}
+/* Results */
+
+.title-container {
+    color: white;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.results-container {
+    width: 40%;
+
+    border: 1px solid white;
+    border-radius: 10px;
+
+    text-align: center;
+}
+
+.city-information {
+    color: white;
+}
+
+.city-name {
+    padding-bottom: 25px;
+}
+
+.city-name h1 {
+    color: white;
+    font-weight: bolder;
+}
+
+.air-quality {
+    padding-bottom: 15px;
+}
+
+.air-quality p {
+    color: white;
+}
+
+.invisible-input {
+    visibility: hidden;
+}

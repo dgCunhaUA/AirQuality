@@ -1,0 +1,44 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+    <title>AirQuality</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../static/styles/main.css">
+    <link rel="stylesheet" th:href ="@{/styles/main.css}">
+</head>
+<body>
+
+    <div class="container title-container">
+        <h1 class="title">AirQuality WebPage</h1>
+    </div>
+
+    <div class="container form-container">
+        <form th:action="@{/air-quality}" th:object="${city}" method="get">
+            <h2 class="search-text"> Procurar por Cidade </h2>
+            <label for="cityName"></label><input placeholder="Nome da Cidade" name="name" id="cityName" th:value="${city.name}" class="input"/>
+            <br>
+
+            <button type="submit" class="search-btn" id="searchBtn">
+                <a class="btn btn-sm animated-button thar-one">Pesquisar</a>
+            </button>
+      </form>
+
+      <hr>
+
+      <form th:action="@{/air-quality-lat-lng}" th:object="${city}" method="get">
+          <h2 class="search-text"> Procurar por Lat e Lng </h2>
+
+          <label for="cityLat"></label><input placeholder="Latitude" id="cityLat" name="lat" th:value="${city.lat}" class="input"/>
+          <label for="cityLng"></label><input placeholder="Longitude" id="cityLng" name="lng" th:value="${city.lng}" class="input"/>
+          <br>
+          <button type="submit" class="search-btn" id="searchBtn1">
+              <a class="btn btn-sm animated-button thar-one">Pesquisar</a>
+          </button>
+      </form>
+
+    </div>
+
+</body>
+</html>

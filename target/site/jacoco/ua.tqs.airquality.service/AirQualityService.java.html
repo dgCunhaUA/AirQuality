@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AirQualityService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">airquality</a> &gt; <a href="index.source.html" class="el_package">ua.tqs.airquality.service</a> &gt; <span class="el_source">AirQualityService.java</span></div><h1>AirQualityService.java</h1><pre class="source lang-java linenums">package ua.tqs.airquality.service;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ua.tqs.airquality.model.AirQuality;
+import ua.tqs.airquality.cache.Cache;
+import ua.tqs.airquality.model.City;
+import ua.tqs.airquality.repository.AmbeeRepository;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+@Service
+<span class="fc" id="L20">public class AirQualityService {</span>
+
+    @Autowired
+    private AmbeeRepository ambeeRepository;
+
+<span class="fc" id="L25">    private final Cache cache = new Cache(100L);</span>
+
+<span class="fc" id="L27">    private static final Logger logger</span>
+<span class="fc" id="L28">            = Logger.getLogger(</span>
+<span class="fc" id="L29">            AirQualityService.class.getName());</span>
+
+    public HashMap&lt;City, AirQuality&gt; getCurrentAirQualityByCity(String city) throws IOException, InterruptedException {
+
+        // Verificar se ja existe em cache
+<span class="fc" id="L34">        logger.log(Level.INFO, &quot;Cache verification ...&quot;);</span>
+<span class="fc" id="L35">        HashMap&lt;City, AirQuality&gt; data = cache.getRequest(cache, city);</span>
+
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if( data.size() == 1 ) {</span>
+<span class="nc" id="L38">            logger.log(Level.INFO, &quot;Found in cache&quot;);</span>
+<span class="nc" id="L39">            return data;</span>
+        }
+
+<span class="fc" id="L42">        logger.log(Level.INFO, &quot;Not found in cache&quot;);</span>
+
+        // Make the request to the external API
+<span class="fc" id="L45">        logger.log(Level.INFO, &quot;External API Request&quot;);</span>
+<span class="fc" id="L46">        String response = ambeeRepository.getCurrentAirQualityByCity(city);</span>
+<span class="fc" id="L47">        logger.log(Level.INFO, &quot;External API Response: &quot; + response);</span>
+
+
+<span class="fc" id="L50">        var gson = new Gson();</span>
+<span class="fc" id="L51">        Map jsonMap = gson.fromJson(response, Map.class);</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if( jsonMap.get(&quot;message&quot;).equals(&quot;success&quot;) ) {</span>
+<span class="fc" id="L54">            logger.log(Level.INFO, &quot;Response with success&quot;);</span>
+        }
+        else {
+<span class="fc" id="L57">            logger.log(Level.INFO, &quot;Response with failure&quot;);</span>
+
+<span class="fc" id="L59">            AirQuality airQuality = new AirQuality();</span>
+<span class="fc" id="L60">            airQuality.setCO(&quot;-&quot;);</span>
+<span class="fc" id="L61">            airQuality.setNO2(&quot;-&quot;);</span>
+<span class="fc" id="L62">            airQuality.setOZONE(&quot;-&quot;);</span>
+<span class="fc" id="L63">            airQuality.setPM10(&quot;-&quot;);</span>
+<span class="fc" id="L64">            airQuality.setPM25(&quot;-&quot;);</span>
+<span class="fc" id="L65">            airQuality.setSO2(&quot;-&quot;);</span>
+
+<span class="fc" id="L67">            City cityObj = new City();</span>
+<span class="fc" id="L68">            cityObj.setName(&quot;City Not Found&quot;);</span>
+<span class="fc" id="L69">            cityObj.setPostalCode(&quot;-&quot;);</span>
+<span class="fc" id="L70">            cityObj.setCountry(&quot;-&quot;);</span>
+<span class="fc" id="L71">            cityObj.setLat(&quot;-&quot;);</span>
+<span class="fc" id="L72">            cityObj.setLng(&quot;-&quot;);</span>
+
+<span class="fc" id="L74">            data.put(cityObj, airQuality);</span>
+
+<span class="fc" id="L76">            return data;</span>
+        }
+
+<span class="fc" id="L79">        logger.log(Level.INFO, &quot;Converting response...&quot;);</span>
+        // Converter o http response to json
+<span class="fc" id="L81">        ArrayList response_array = (ArrayList) jsonMap.get(&quot;stations&quot;);</span>
+<span class="fc" id="L82">        JsonObject jsonObject = gson.toJsonTree(response_array.get(0)).getAsJsonObject();</span>
+
+
+        // Recolher os valores
+<span class="fc" id="L86">        AirQuality airQuality = new AirQuality();</span>
+<span class="fc" id="L87">        airQuality.setCO(jsonObject.get(&quot;CO&quot;).toString());</span>
+<span class="fc" id="L88">        airQuality.setNO2(jsonObject.get(&quot;NO2&quot;).toString());</span>
+<span class="fc" id="L89">        airQuality.setOZONE(jsonObject.get(&quot;OZONE&quot;).toString());</span>
+<span class="fc" id="L90">        airQuality.setPM10(jsonObject.get(&quot;PM10&quot;).toString());</span>
+<span class="fc" id="L91">        airQuality.setPM25(jsonObject.get(&quot;PM25&quot;).toString());</span>
+<span class="fc" id="L92">        airQuality.setSO2(jsonObject.get(&quot;SO2&quot;).toString());</span>
+
+<span class="fc" id="L94">        City cityObj = new City();</span>
+<span class="fc" id="L95">        cityObj.setName(jsonObject.get(&quot;city&quot;).toString());</span>
+<span class="fc" id="L96">        cityObj.setCountry(jsonObject.get(&quot;countryCode&quot;).toString());</span>
+<span class="fc" id="L97">        cityObj.setLat(jsonObject.get(&quot;lat&quot;).toString());</span>
+<span class="fc" id="L98">        cityObj.setLng(jsonObject.get(&quot;lng&quot;).toString());</span>
+<span class="fc" id="L99">        cityObj.setPostalCode(jsonObject.get(&quot;postalCode&quot;).toString());</span>
+
+        // Store Request Response In Cache
+<span class="fc" id="L102">        cache.storeRequest(cityObj, airQuality);</span>
+<span class="fc" id="L103">        logger.log(Level.INFO, &quot;Response stored in cache&quot;);</span>
+
+
+<span class="fc" id="L106">        data.put(cityObj, airQuality);</span>
+
+<span class="fc" id="L108">        return data;</span>
+    }
+
+    public HashMap&lt;City, AirQuality&gt; getCurrentAirQualityByLatLng(String lat, String lng) throws IOException, InterruptedException {
+
+<span class="nc" id="L113">        logger.log(Level.INFO, &quot;Cache verification ...&quot;);</span>
+<span class="nc" id="L114">        HashMap&lt;City, AirQuality&gt; data = cache.getRequestLatLng(cache, lat, lng);</span>
+
+
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if( data.size() == 1 ) {</span>
+<span class="nc" id="L118">            logger.log(Level.INFO, &quot;Found in cache&quot;);</span>
+<span class="nc" id="L119">            return data;</span>
+        }
+<span class="nc" id="L121">        logger.log(Level.INFO, &quot;Not found in cache&quot;);</span>
+
+
+        // Make the request to the external API
+<span class="nc" id="L125">        logger.log(Level.INFO, &quot;External API Request&quot;);</span>
+<span class="nc" id="L126">        String response = ambeeRepository.getCurrentAirQualityByLatLng(lat, lng);</span>
+<span class="nc" id="L127">        logger.log(Level.INFO, &quot;External API Response: &quot; + response);</span>
+
+
+<span class="nc" id="L130">        var gson = new Gson();</span>
+<span class="nc" id="L131">        Map jsonMap = gson.fromJson(response, Map.class);</span>
+
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if( jsonMap.get(&quot;message&quot;).equals(&quot;success&quot;) )</span>
+<span class="nc" id="L134">            logger.log(Level.INFO, &quot;Response with success&quot;);</span>
+
+        else {
+<span class="nc" id="L137">            logger.log(Level.INFO, &quot;Response with failure&quot;);</span>
+
+<span class="nc" id="L139">            AirQuality airQuality = new AirQuality();</span>
+<span class="nc" id="L140">            airQuality.setCO(&quot;-&quot;);</span>
+<span class="nc" id="L141">            airQuality.setNO2(&quot;-&quot;);</span>
+<span class="nc" id="L142">            airQuality.setOZONE(&quot;-&quot;);</span>
+<span class="nc" id="L143">            airQuality.setPM10(&quot;-&quot;);</span>
+<span class="nc" id="L144">            airQuality.setPM25(&quot;-&quot;);</span>
+<span class="nc" id="L145">            airQuality.setSO2(&quot;-&quot;);</span>
+
+<span class="nc" id="L147">            City cityObj = new City();</span>
+<span class="nc" id="L148">            cityObj.setName(&quot;City Not Found&quot;);</span>
+<span class="nc" id="L149">            cityObj.setPostalCode(&quot;-&quot;);</span>
+<span class="nc" id="L150">            cityObj.setCountry(&quot;-&quot;);</span>
+<span class="nc" id="L151">            cityObj.setLat(&quot;-&quot;);</span>
+<span class="nc" id="L152">            cityObj.setLng(&quot;-&quot;);</span>
+
+<span class="nc" id="L154">            data.put(cityObj, airQuality);</span>
+
+<span class="nc" id="L156">            return data;</span>
+        }
+
+<span class="nc" id="L159">        logger.log(Level.INFO, &quot;Converting response...&quot;);</span>
+        // Converter o http response to json
+<span class="nc" id="L161">        ArrayList response_array = (ArrayList) jsonMap.get(&quot;stations&quot;);</span>
+<span class="nc" id="L162">        JsonObject jsonObject = gson.toJsonTree(response_array.get(0)).getAsJsonObject();</span>
+
+
+        // Recolher os valores
+<span class="nc" id="L166">        AirQuality airQuality = new AirQuality();</span>
+<span class="nc" id="L167">        airQuality.setCO(jsonObject.get(&quot;CO&quot;).toString());</span>
+<span class="nc" id="L168">        airQuality.setNO2(jsonObject.get(&quot;NO2&quot;).toString());</span>
+<span class="nc" id="L169">        airQuality.setOZONE(jsonObject.get(&quot;OZONE&quot;).toString());</span>
+<span class="nc" id="L170">        airQuality.setPM10(jsonObject.get(&quot;PM10&quot;).toString());</span>
+<span class="nc" id="L171">        airQuality.setPM25(jsonObject.get(&quot;PM25&quot;).toString());</span>
+<span class="nc" id="L172">        airQuality.setSO2(jsonObject.get(&quot;SO2&quot;).toString());</span>
+
+<span class="nc" id="L174">        City cityObj = new City();</span>
+<span class="nc" id="L175">        cityObj.setName(jsonObject.get(&quot;city&quot;).toString());</span>
+<span class="nc" id="L176">        cityObj.setCountry(jsonObject.get(&quot;countryCode&quot;).toString());</span>
+<span class="nc" id="L177">        cityObj.setLat(jsonObject.get(&quot;lat&quot;).toString());</span>
+<span class="nc" id="L178">        cityObj.setLng(jsonObject.get(&quot;lng&quot;).toString());</span>
+<span class="nc" id="L179">        cityObj.setPostalCode(jsonObject.get(&quot;postalCode&quot;).toString());</span>
+
+        // Store Request Response In Cache
+<span class="nc" id="L182">        cache.storeRequest(cityObj, airQuality);</span>
+<span class="nc" id="L183">        logger.log(Level.INFO, &quot;Response stored in cache&quot;);</span>
+
+
+<span class="nc" id="L186">        data.put(cityObj, airQuality);</span>
+
+<span class="nc" id="L188">        logger.log(Level.INFO, data.toString());</span>
+
+<span class="nc" id="L190">        return data;</span>
+    }
+
+    /*
+    public HashMap&lt;City, AirQuality&gt; getHistoricalAirQualityByCity(City city) throws IOException, InterruptedException {
+
+        String response = null;
+        for(City i : cache.getLastRequests().keySet() ) {
+            System.out.println(i.getName());
+            System.out.println(city.getName());
+            if( i.getName().equals(city.getName())) {
+                logger.log(Level.INFO, &quot;External API Request&quot;);
+                response = ambeeRepository.getHistoricalAirQualityByCity(city);
+            }
+        }
+
+        if (response == null)
+            logger.log(Level.WARNING, &quot;City not found in cache, cant make history error.&quot;);
+
+
+        // Make the request to the external API
+        logger.log(Level.INFO, &quot;External API Request&quot;);
+        //String response = ambeeRepository.getHistoricalAirQualityByCity(city);
+        logger.log(Level.INFO, &quot;External API Response: &quot; + response);
+
+        // Incr number os Request
+        //cache.requestsIncr();
+        //logger.log(Level.INFO, &quot;Cache requests increased&quot;);
+
+        //HashMap&lt;City, AirQuality&gt; data = cache.getRequest(cache, city.getName());
+        HashMap&lt;City, AirQuality&gt; data = new HashMap&lt;&gt;();
+
+
+        var gson = new Gson();
+        Map jsonMap = gson.fromJson(response, Map.class);
+
+        if( jsonMap.get(&quot;message&quot;).equals(&quot;success&quot;) ) {
+            //cache.hitsIncr();
+            logger.log(Level.INFO, &quot;Response with success&quot;);
+        }
+        else {
+            //cache.missesIncr();
+            logger.log(Level.INFO, &quot;Response with failure&quot;);
+
+            AirQuality airQuality = new AirQuality();
+            airQuality.setCO(&quot;-&quot;);
+            airQuality.setNO2(&quot;-&quot;);
+            airQuality.setOZONE(&quot;-&quot;);
+            airQuality.setPM10(&quot;-&quot;);
+            airQuality.setPM25(&quot;-&quot;);
+            airQuality.setSO2(&quot;-&quot;);
+
+            City cityObj = new City();
+            cityObj.setName(&quot;City Not Found&quot;);
+            cityObj.setPostalCode(&quot;-&quot;);
+            cityObj.setCountry(&quot;-&quot;);
+            cityObj.setLat(&quot;-&quot;);
+            cityObj.setLng(&quot;-&quot;);
+
+            //data.put(cityObj, airQuality);
+
+            //return data;
+        }
+
+        logger.log(Level.INFO, &quot;Converting response...&quot;);
+        // Converter o http response to json
+        ArrayList response_array = (ArrayList) jsonMap.get(&quot;stations&quot;);
+        JsonObject jsonObject = gson.toJsonTree(response_array.get(0)).getAsJsonObject();
+
+
+        // Recolher os valores
+        AirQuality airQuality = new AirQuality();
+        airQuality.setCO(jsonObject.get(&quot;CO&quot;).toString());
+        airQuality.setNO2(jsonObject.get(&quot;NO2&quot;).toString());
+        airQuality.setOZONE(jsonObject.get(&quot;OZONE&quot;).toString());
+        airQuality.setPM10(jsonObject.get(&quot;PM10&quot;).toString());
+        airQuality.setPM25(jsonObject.get(&quot;PM25&quot;).toString());
+        airQuality.setSO2(jsonObject.get(&quot;SO2&quot;).toString());
+
+        City cityObj = new City();
+        cityObj.setName(jsonObject.get(&quot;city&quot;).toString());
+        cityObj.setCountry(jsonObject.get(&quot;countryCode&quot;).toString());
+        cityObj.setLat(jsonObject.get(&quot;lat&quot;).toString());
+        cityObj.setLng(jsonObject.get(&quot;lng&quot;).toString());
+        cityObj.setPostalCode(jsonObject.get(&quot;postalCode&quot;).toString());
+
+        // Store Request Response In Cache
+        cache.storeRequest(cityObj, airQuality);
+        logger.log(Level.INFO, &quot;Response stored in cache&quot;);
+
+
+        data.put(cityObj, airQuality);
+
+        return data;
+    }
+    */
+
+
+    public Cache getCacheStatistics() {
+<span class="nc" id="L289">        logger.log(Level.INFO, &quot;Returning cache statistics&quot;);</span>
+<span class="nc" id="L290">        return cache;</span>
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
