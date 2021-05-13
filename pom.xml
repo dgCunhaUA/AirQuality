@@ -30,8 +30,6 @@
         <sonar.projectKey>dgCunhaUA_TQS</sonar.projectKey>
         <sonar.organization>dgcunhaua</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.login>admin</sonar.login>
-        <sonar.password>admin1234</sonar.password>
     </properties>
 
     <dependencies>
