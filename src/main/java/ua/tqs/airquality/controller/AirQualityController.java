@@ -34,9 +34,8 @@ public class AirQualityController {
 
     @GetMapping("/air-quality")
     public String getAirQualityByCityName(@ModelAttribute City city, Model model) throws IOException, InterruptedException {
-        logger.log(Level.INFO, "Get city name to search for airquality: {0}", city);
 
-        logger.log(Level.INFO, "External API Request for {0}", city.getName());
+        logger.log(Level.INFO, "Getting current air quality city by name ...");
         Map<City, AirQuality> response = airQualityService.getCurrentAirQualityByCity(city.getName());
         logger.log(Level.INFO, "Response: {0}", response);
 
@@ -52,9 +51,8 @@ public class AirQualityController {
 
     @GetMapping("/air-quality-lat-lng")
     public String getAirQualityByLatLng(@ModelAttribute City city, Model model) throws IOException, InterruptedException {
-        logger.log(Level.INFO, () -> "Get city lat and lng to search for airquality: " + city.getLat() + " - " + city.getLng());
 
-        logger.log(Level.INFO, "External API Request for {0}", city.getName());
+        logger.log(Level.INFO, "Getting current air quality city by coords ...");
         Map<City, AirQuality> response = airQualityService.getCurrentAirQualityByLatLng(city.getLat(), city.getLng());
         logger.log(Level.INFO, "Response: {0}", response);
 
