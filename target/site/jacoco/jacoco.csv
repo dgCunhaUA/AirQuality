@@ -1,9 +1,9 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-airquality,ua.tqs.airquality.controller,AirQualityController,143,0,4,0,28,0,7,0,5,0
-airquality,ua.tqs.airquality.controller,AirQualityRestController,20,32,0,0,4,10,1,4,1,4
+airquality,ua.tqs.airquality.controller,AirQualityController,9,135,0,0,2,23,1,7,1,7
+airquality,ua.tqs.airquality.controller,AirQualityRestController,0,55,0,0,0,14,0,6,0,6
 airquality,ua.tqs.airquality.cache,Cache,0,275,1,15,0,69,1,29,0,22
-airquality,ua.tqs.airquality.model,City,6,44,0,0,2,15,2,10,2,10
+airquality,ua.tqs.airquality.model,City,0,50,0,0,0,17,0,12,0,12
 airquality,ua.tqs.airquality.model,AirQuality,0,59,0,0,0,20,0,14,0,14
 airquality,ua.tqs.airquality,AirqualityApplication,5,3,0,0,2,1,1,1,1,1
-airquality,ua.tqs.airquality.repository,AmbeeRepository,37,34,2,2,11,11,2,3,1,2
-airquality,ua.tqs.airquality.service,AirQualityService,238,226,5,3,54,52,5,4,2,3
+airquality,ua.tqs.airquality.repository,AmbeeRepository,4,62,1,3,1,20,1,4,0,3
+airquality,ua.tqs.airquality.service,AirQualityService,19,266,2,4,6,60,3,6,1,5

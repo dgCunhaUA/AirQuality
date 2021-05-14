@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AirQualityRestController.class)
-public class AirQualityRestController_WithMockServiceTest {
+class AirQualityRestController_WithMockServiceTest {
 
     @Autowired
     private MockMvc mvc;
@@ -31,7 +31,7 @@ public class AirQualityRestController_WithMockServiceTest {
 
 
     @Test
-    public void whenGetAirQualityByCityName_thenReturnData( ) throws Exception {
+    void whenGetAirQualityByCityName_thenReturnData( ) throws Exception {
 
         AirQuality airQuality = new AirQuality();
         airQuality.setCO("0.20208333333333334");
@@ -62,7 +62,7 @@ public class AirQualityRestController_WithMockServiceTest {
     }
 
     @Test
-    public void whenGetAirQualityByWrongCityName_thenReturnData( ) throws Exception {
+    void whenGetAirQualityByWrongCityName_thenReturnData( ) throws Exception {
 
         AirQuality airQuality = new AirQuality();
         airQuality.setCO("-");
@@ -92,8 +92,76 @@ public class AirQualityRestController_WithMockServiceTest {
         verify(airQualityService, times(1)).getCurrentAirQualityByCity("Errorrrrr");
     }
 
+    //TODO: get por lat e lng
     @Test
-    public void whenGetStats_thenReturnEmptyData() throws Exception {
+    void whenGetAirQualityByLatLng_thenReturnData( ) throws Exception {
+
+        AirQuality airQuality = new AirQuality();
+        airQuality.setCO("0.20208333333333334");
+        airQuality.setNO2("7.836");
+        airQuality.setOZONE("3.449");
+        airQuality.setPM10("24.814");
+        airQuality.setPM25("6.8");
+        airQuality.setSO2("3.384");
+
+        City cityObj = new City();
+        cityObj.setName("\"Viseu\"");
+        cityObj.setCountry("\"PT\"");
+        cityObj.setLat("40.661");
+        cityObj.setLng("-7.9097");
+        cityObj.setPostalCode("\"3500-004\"");
+
+        HashMap<City, AirQuality> response = new HashMap<>();
+        response.put(cityObj, airQuality);
+
+        when( airQualityService.getCurrentAirQualityByLatLng("40.661", "-7.9097") ).thenReturn(response);
+
+        mvc.perform(get("/api/air-quality-lat-lng").contentType(MediaType.APPLICATION_JSON)
+                .param("lat", "40.661")
+                .param("lng", "-7.9097"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"City{name='\\\"Viseu\\\"', country='\\\"PT\\\"', lat='40.661', lng='-7.9097', postalCode='\\\"3500-004\\\"'}\":{\"co\":\"0.20208333333333334\",\"no2\":\"7.836\",\"ozone\":\"3.449\",\"pm10\":\"24.814\",\"pm25\":\"6.8\",\"so2\":\"3.384\"}}")
+                );
+
+        verify(airQualityService, times(1)).getCurrentAirQualityByLatLng("40.661", "-7.9097");
+    }
+
+    @Test
+    void whenGetAirQualityByWrongLatLng_thenReturnData( ) throws Exception {
+
+        AirQuality airQuality = new AirQuality();
+        airQuality.setCO("-");
+        airQuality.setNO2("-");
+        airQuality.setOZONE("-");
+        airQuality.setPM10("-");
+        airQuality.setPM25("-");
+        airQuality.setSO2("-");
+
+        City cityObj = new City();
+        cityObj.setName("City Not Found");
+        cityObj.setPostalCode("-");
+        cityObj.setCountry("-");
+        cityObj.setLat("-");
+        cityObj.setLng("-");
+
+        HashMap<City, AirQuality> response = new HashMap<>();
+        response.put(cityObj, airQuality);
+
+        when( airQualityService.getCurrentAirQualityByLatLng("---", "----") ).thenReturn(response);
+
+        mvc.perform(get("/api/air-quality-lat-lng").contentType(MediaType.APPLICATION_JSON)
+                .param("lat", "---")
+                .param("lng", "----"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"City{name='City Not Found', country='-', lat='-', lng='-', postalCode='-'}\":{\"co\":\"-\",\"no2\":\"-\",\"ozone\":\"-\",\"pm10\":\"-\",\"pm25\":\"-\",\"so2\":\"-\"}}")
+                );
+
+        verify(airQualityService, times(1)).getCurrentAirQualityByLatLng("---", "----");
+    }
+
+
+    @Test
+    void whenGetStats_thenReturnEmptyData() throws Exception {
 
         Cache returnedCache = new Cache(100L);
         returnedCache.setTimeToLive(100);
@@ -113,7 +181,7 @@ public class AirQualityRestController_WithMockServiceTest {
     }
 
     @Test
-    public void whenGetStats_thenReturnDataWithLatestRequests() throws Exception {
+    void whenGetStats_thenReturnDataWithLatestRequests() throws Exception {
 
         AirQuality airQuality = new AirQuality();
         airQuality.setCO("0.20208333333333334");
@@ -143,6 +211,7 @@ public class AirQualityRestController_WithMockServiceTest {
         returnedCache.setNumOfRequests(1);
         returnedCache.setLastRequests(lastRequests);
         returnedCache.setExpiredRequests(expiredRequests);
+
 
         when( airQualityService.getCacheStatistics() ).thenReturn(returnedCache);
 

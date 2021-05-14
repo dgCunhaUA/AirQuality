@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ua.tqs.airquality.model.CacheTest
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.026 s - in ua.tqs.airquality.model.CacheTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.057 s - in ua.tqs.airquality.model.CacheTest

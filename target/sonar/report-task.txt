@@ -1,0 +1,6 @@
+projectKey=dgCunhaUA_TQS
+serverUrl=http://localhost:9001
+serverVersion=8.8.0.42792
+dashboardUrl=http://localhost:9001/dashboard?id=dgCunhaUA_TQS
+ceTaskId=AXlrDoj8lmuTHc3YYsXd
+ceTaskUrl=http://localhost:9001/api/ce/task?id=AXlrDoj8lmuTHc3YYsXd

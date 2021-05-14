@@ -9,12 +9,14 @@ import ua.tqs.airquality.model.City;
 import ua.tqs.airquality.service.AirQualityService;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Controller
 public class AirQualityController {
+
+    private String resultsTemplate = "results";
 
     @Autowired
     private AirQualityService airQualityService;
@@ -30,61 +32,39 @@ public class AirQualityController {
         return "index";
     }
 
-    @RequestMapping(value = "/air-quality", method = RequestMethod.GET)
+    @GetMapping("/air-quality")
     public String getAirQualityByCityName(@ModelAttribute City city, Model model) throws IOException, InterruptedException {
-        logger.log(Level.INFO, "Get city name to search for airquality: {0}", city.toString());
+        logger.log(Level.INFO, "Get city name to search for airquality: {0}", city);
 
         logger.log(Level.INFO, "External API Request for {0}", city.getName());
-        HashMap<City, AirQuality> response = airQualityService.getCurrentAirQualityByCity(city.getName());
-        logger.log(Level.INFO, "Response: " + response.toString());
+        Map<City, AirQuality> response = airQualityService.getCurrentAirQualityByCity(city.getName());
+        logger.log(Level.INFO, "Response: {0}", response);
 
-        for (City i : response.keySet()) {
-            AirQuality airQuality = response.get(i);
+        Map.Entry<City, AirQuality> entry = response.entrySet().iterator().next();
 
-            logger.log(Level.INFO, "Return template, infos: " + i.toString() + airQuality.toString());
-            model.addAttribute("airQuality", airQuality);
-            model.addAttribute("city", i);
-            return "results";
-        }
+        logger.log(Level.INFO, () -> "Return template, infos: " + entry.getKey().toString() + entry.getValue().toString());
+        model.addAttribute("airQuality", entry.getValue());
+        model.addAttribute("city", entry.getKey());
 
-        return "results";
+        return resultsTemplate;
     }
 
-    //    public String getAirQualityByLatLng( @RequestParam(value = "lat", required = false) String lat, @RequestParam(value = "lng", required = false) String lng, Model model) throws IOException, InterruptedException {
-    //40.6575
-    //-7.91428
-    @RequestMapping(value = "/air-quality-lat-lng", method = RequestMethod.GET)
+
+    @GetMapping("/air-quality-lat-lng")
     public String getAirQualityByLatLng(@ModelAttribute City city, Model model) throws IOException, InterruptedException {
-        logger.log(Level.INFO, "Get city lat and lng to search for airquality: {0}", city.toString());
-        //logger.log(Level.INFO, "Get city lat and lng to search for airquality: " + lat + " - " + lng);
+        logger.log(Level.INFO, () -> "Get city lat and lng to search for airquality: " + city.getLat() + " - " + city.getLng());
 
         logger.log(Level.INFO, "External API Request for {0}", city.getName());
-        HashMap<City, AirQuality> response = airQualityService.getCurrentAirQualityByLatLng(city.getLat(), city.getLng());
-        logger.log(Level.INFO, "Response: " + response.toString());
+        Map<City, AirQuality> response = airQualityService.getCurrentAirQualityByLatLng(city.getLat(), city.getLng());
+        logger.log(Level.INFO, "Response: {0}", response);
 
 
-        for (City i : response.keySet()) {
-            AirQuality airQuality = response.get(i);
+        Map.Entry<City, AirQuality> entry = response.entrySet().iterator().next();
 
-            logger.log(Level.INFO, "Return template, infos: " + i.toString() + airQuality.toString());
-            model.addAttribute("airQuality", airQuality);
-            model.addAttribute("city", i);
-            return "results";
-        }
+        logger.log(Level.INFO, () -> "Return template, infos: " + entry.getKey().toString() + entry.getValue().toString());
+        model.addAttribute("airQuality", entry.getValue());
+        model.addAttribute("city", entry.getKey());
 
-        return "results";
+        return resultsTemplate;
     }
-
-    /*
-    @RequestMapping(value = "/air-quality-historical", method = RequestMethod.GET)
-    public String getHistoricalAirQualityByCityName(@ModelAttribute City city, Model model) throws IOException, InterruptedException {
-        logger.log(Level.INFO, "Get Historical AirQuality data for: {0}", city.toString());
-
-        HashMap<City, AirQuality> response = airQualityService.getHistoricalAirQualityByCity(city);
-        //logger.log(Level.INFO, "Response: " + response.toString());
-
-
-        return "results-historical";
-    }*/
-
 }

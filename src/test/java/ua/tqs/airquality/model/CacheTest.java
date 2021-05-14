@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ua.tqs.airquality.cache.Cache;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,11 +33,11 @@ class CacheTest {
     void setUp() {
         cache = new Cache(5L);
 
-        assertEquals(cache.getLastRequests().size(), 0);
-        assertEquals(cache.getExpiredRequests().size(), 0);
-        assertEquals(cache.getNumOfRequests(), 0);
-        assertEquals(cache.getNumOfHits(), 0);
-        assertEquals(cache.getNumOfMisses(), 0);
+        assertEquals(0, cache.getLastRequests().size());
+        assertEquals(0, cache.getExpiredRequests().size());
+        assertEquals(0, cache.getNumOfRequests());
+        assertEquals(0, cache.getNumOfHits());
+        assertEquals(0, cache.getNumOfMisses());
 
         city = new City();
         airQuality = new AirQuality();
@@ -58,9 +59,9 @@ class CacheTest {
 
         cache.storeRequest(city, airQuality);
 
-        assertEquals(cache.getLastRequests().size(), 1);
-        assertEquals(cache.getExpiredRequests().size(), 1);
-        assertEquals(cache.getLastRequests().get(city), airQuality);
+        assertEquals(1, cache.getLastRequests().size());
+        assertEquals(1, cache.getExpiredRequests().size());
+        assertEquals(airQuality, cache.getLastRequests().get(city));
     }
 
     @Test
@@ -71,27 +72,27 @@ class CacheTest {
 
         cache.storeRequest(city, airQuality);
 
-        assertEquals(cache.getLastRequests().size(), 1);
-        assertEquals(cache.getExpiredRequests().size(), 1);
-        assertEquals(cache.getLastRequests().get(city), airQuality);
+        assertEquals(1, cache.getLastRequests().size());
+        assertEquals(1, cache.getExpiredRequests().size());
+        assertEquals(airQuality, cache.getLastRequests().get(city));
     }
 
     @Test
     void requestsIncr() {
         cache.requestsIncr();
-        assertEquals(cache.getNumOfRequests(), 1);
+        assertEquals(1, cache.getNumOfRequests());
     }
 
     @Test
     void hitsIncr() {
         cache.hitsIncr();
-        assertEquals(cache.getNumOfHits(), 1);
+        assertEquals(1, cache.getNumOfHits());
     }
 
     @Test
     void missesIncr() {
         cache.missesIncr();
-        assertEquals(cache.getNumOfMisses(), 1);
+        assertEquals(1, cache.getNumOfMisses());
     }
 
     @Test
@@ -101,17 +102,17 @@ class CacheTest {
         airQuality.setCO("10");
 
         cache.storeRequest(city, airQuality);
-        assertEquals(cache.getLastRequests().size(), 1);
+        assertEquals(1, cache.getLastRequests().size());
 
 
         HashMap<City, AirQuality> data = new HashMap<City, AirQuality>();
         data.put(city, airQuality);
 
         assertEquals(cache.getRequest(cache, storedCity), data);
-        assertEquals(data.size(), 1);
-        assertEquals(cache.getNumOfRequests(), 1);
-        assertEquals(cache.getNumOfHits(), 1);
-        assertEquals(cache.getNumOfMisses(), 0);
+        assertEquals(1, data.size());
+        assertEquals(1, cache.getNumOfRequests());
+        assertEquals(1, cache.getNumOfHits());
+        assertEquals(0, cache.getNumOfMisses());
     }
 
     @Test
@@ -124,7 +125,7 @@ class CacheTest {
         airQuality.setCO("1");
 
         cache.storeRequest(city, airQuality);
-        assertEquals(cache.getLastRequests().size(), 1);
+        assertEquals(1, cache.getLastRequests().size());
 
 
         HashMap<City, AirQuality> data = new HashMap<City, AirQuality>();
@@ -132,10 +133,10 @@ class CacheTest {
 
 
         assertEquals(cache.getRequestLatLng(cache, storedLat, storedLng), data);
-        assertEquals(data.size(), 1);
-        assertEquals(cache.getNumOfRequests(), 1);
-        assertEquals(cache.getNumOfHits(), 1);
-        assertEquals(cache.getNumOfMisses(), 0);
+        assertEquals(1, data.size());
+        assertEquals(1, cache.getNumOfRequests());
+        assertEquals(1, cache.getNumOfHits());
+        assertEquals(0, cache.getNumOfMisses());
     }
 
     @Test
@@ -145,15 +146,15 @@ class CacheTest {
         airQuality.setCO("10");
 
         cache.storeRequest(city, airQuality);
-        assertEquals(cache.getLastRequests().size(), 1);
+        assertEquals(1, cache.getLastRequests().size());
 
         HashMap<City, AirQuality> data2 = new HashMap<City, AirQuality>();
 
-        assertEquals(cache.getRequest(cache, NonStoredCity), data2);
-        assertEquals(data2.size(), 0);
-        assertEquals(cache.getNumOfRequests(), 1);
-        assertEquals(cache.getNumOfHits(), 0);
-        assertEquals(cache.getNumOfMisses(), 1);
+        assertEquals(data2, cache.getRequest(cache, NonStoredCity));
+        assertEquals(0, data2.size());
+        assertEquals(1, cache.getNumOfRequests());
+        assertEquals(0, cache.getNumOfHits());
+        assertEquals(1, cache.getNumOfMisses());
     }
 
     @Test
@@ -166,15 +167,15 @@ class CacheTest {
         airQuality.setCO("1");
 
         cache.storeRequest(city, airQuality);
-        assertEquals(cache.getLastRequests().size(), 1);
+        assertEquals(1, cache.getLastRequests().size());
 
         HashMap<City, AirQuality> data2 = new HashMap<City, AirQuality>();
 
         assertEquals(cache.getRequestLatLng(cache, NonStoredCityLat, NonStoredCityLng), data2);
-        assertEquals(data2.size(), 0);
-        assertEquals(cache.getNumOfRequests(), 1);
-        assertEquals(cache.getNumOfHits(), 0);
-        assertEquals(cache.getNumOfMisses(), 1);
+        assertEquals(0, data2.size());
+        assertEquals(1, cache.getNumOfRequests());
+        assertEquals(0, cache.getNumOfHits());
+        assertEquals(1, cache.getNumOfMisses());
     }
 
     @Test
@@ -184,16 +185,16 @@ class CacheTest {
         airQuality.setCO("10");
 
         cache.storeRequest(city, airQuality);
-        assertEquals(cache.getLastRequests().size(), 1);
+        assertEquals(1, cache.getLastRequests().size());
 
         LOGGER.log(Level.INFO, "Waiting expiration time ...");
         TimeUnit.SECONDS.sleep(8);
 
-        HashMap<City, AirQuality> data = cache.getRequest(cache, search_city);
-        assertEquals(data.size(), 0);
-        assertEquals(cache.getNumOfRequests(), 1);
-        assertEquals(cache.getNumOfHits(), 0);
-        assertEquals(cache.getNumOfMisses(), 1);
+        Map<City, AirQuality> data = cache.getRequest(cache, search_city);
+        assertEquals(0, data.size());
+        assertEquals(1, cache.getNumOfRequests());
+        assertEquals(0, cache.getNumOfHits());
+        assertEquals(1, cache.getNumOfMisses());
     }
 
     @Test
@@ -206,15 +207,15 @@ class CacheTest {
         airQuality.setCO("1");
 
         cache.storeRequest(city, airQuality);
-        assertEquals(cache.getLastRequests().size(), 1);
+        assertEquals(1, cache.getLastRequests().size());
 
         LOGGER.log(Level.INFO, "Waiting expiration time ...");
         TimeUnit.SECONDS.sleep(8);
 
-        HashMap<City, AirQuality> data = cache.getRequestLatLng(cache, search_city_lat, search_city_lng);
-        assertEquals(data.size(), 0);
-        assertEquals(cache.getNumOfRequests(), 1);
-        assertEquals(cache.getNumOfHits(), 0);
-        assertEquals(cache.getNumOfMisses(), 1);
+        Map<City, AirQuality> data = cache.getRequestLatLng(cache, search_city_lat, search_city_lng);
+        assertEquals(0, data.size());
+        assertEquals(1, cache.getNumOfRequests());
+        assertEquals(0, cache.getNumOfHits());
+        assertEquals(1, cache.getNumOfMisses());
     }
 }

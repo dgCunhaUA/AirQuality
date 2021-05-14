@@ -4,152 +4,153 @@ import ua.tqs.airquality.model.AirQuality;
 import ua.tqs.airquality.model.City;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Cache {
 
     private long timeToLive;
-<span class="fc" id="L13">    private int numOfRequests = 0;</span>
-<span class="fc" id="L14">    private int numOfHits = 0;</span>
-<span class="fc" id="L15">    private int numOfMisses = 0;</span>
-    private HashMap&lt;City, AirQuality&gt; lastRequests ;
-    private HashMap&lt;City, Long&gt; expiredRequests ;
+<span class="fc" id="L14">    private int numOfRequests = 0;</span>
+<span class="fc" id="L15">    private int numOfHits = 0;</span>
+<span class="fc" id="L16">    private int numOfMisses = 0;</span>
+    private Map&lt;City, AirQuality&gt; lastRequests ;
+    private Map&lt;City, Long&gt; expiredRequests ;
 
-<span class="fc" id="L19">    private final static Logger LOGGER =  Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);</span>
+<span class="fc" id="L20">    private static final Logger LOGGER =  Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);</span>
 
-<span class="fc" id="L21">    public Cache(long expireTime) {</span>
-<span class="fc" id="L22">        this.lastRequests = new HashMap&lt;City, AirQuality&gt;();</span>
-<span class="fc" id="L23">        this.expiredRequests = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L24">        this.timeToLive = expireTime;</span>
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L22">    public Cache(long expireTime) {</span>
+<span class="fc" id="L23">        this.lastRequests = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L24">        this.expiredRequests = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L25">        this.timeToLive = expireTime;</span>
+<span class="fc" id="L26">    }</span>
 
 
     public void storeRequest(City city, AirQuality airQuality) {
-<span class="fc" id="L29">        LOGGER.log(Level.INFO, &quot;Storing Request ...&quot;);</span>
-<span class="fc" id="L30">        this.lastRequests.put(city, airQuality);</span>
-<span class="fc" id="L31">        this.expiredRequests.put(city, System.currentTimeMillis() + timeToLive * 1000);</span>
-<span class="fc" id="L32">        LOGGER.log(Level.INFO, &quot;Requests stored&quot;);</span>
-<span class="fc" id="L33">    }</span>
+<span class="fc" id="L30">        LOGGER.log(Level.INFO, &quot;Storing Request ...&quot;);</span>
+<span class="fc" id="L31">        this.lastRequests.put(city, airQuality);</span>
+<span class="fc" id="L32">        this.expiredRequests.put(city, System.currentTimeMillis() + timeToLive * 1000);</span>
+<span class="fc" id="L33">        LOGGER.log(Level.INFO, &quot;Requests stored&quot;);</span>
+<span class="fc" id="L34">    }</span>
 
-    public HashMap&lt;City, AirQuality&gt; getRequest(Cache cache, String city) {
-<span class="fc" id="L36">        LOGGER.log(Level.INFO, &quot;Getting Request ...&quot;);</span>
-<span class="fc" id="L37">        HashMap&lt;City, AirQuality&gt; data = new HashMap&lt;&gt;();</span>
+    public Map&lt;City, AirQuality&gt; getRequest(Cache cache, String city) {
+<span class="fc" id="L37">        LOGGER.log(Level.INFO, &quot;Getting Request ...&quot;);</span>
+<span class="fc" id="L38">        HashMap&lt;City, AirQuality&gt; data = new HashMap&lt;&gt;();</span>
 
         // Incr number os Request
-<span class="fc" id="L40">        requestsIncr();</span>
+<span class="fc" id="L41">        requestsIncr();</span>
 
-<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (City i : cache.getLastRequests().keySet()) {</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">            if( i.getName().substring(1, i.getName().length() - 1).equals(city) ) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (City i : cache.getLastRequests().keySet()) {</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">            if( i.getName().substring(1, i.getName().length() - 1).equals(city) ) {</span>
 
-<span class="fc bfc" id="L45" title="All 2 branches covered.">                if ( hasExpired(i) ) {</span>
-<span class="fc" id="L46">                    removeExpiredRequest(i);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">                if ( hasExpired(i) ) {</span>
+<span class="fc" id="L47">                    removeExpiredRequest(i);</span>
                 } else {
-<span class="fc" id="L48">                    data.put(i, cache.getLastRequests().get(i));</span>
+<span class="fc" id="L49">                    data.put(i, cache.getLastRequests().get(i));</span>
 
-<span class="fc" id="L50">                    hitsIncr();</span>
-<span class="fc" id="L51">                    return data;</span>
+<span class="fc" id="L51">                    hitsIncr();</span>
+<span class="fc" id="L52">                    return data;</span>
                 }
 
             }
-<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">        }</span>
 
-<span class="fc" id="L57">        missesIncr();</span>
-<span class="fc" id="L58">        return data;</span>
+<span class="fc" id="L58">        missesIncr();</span>
+<span class="fc" id="L59">        return data;</span>
     }
 
-    public HashMap&lt;City, AirQuality&gt; getRequestLatLng(Cache cache, String lat, String lng) {
-<span class="fc" id="L62">        LOGGER.log(Level.INFO, &quot;Getting Request ...&quot;);</span>
-<span class="fc" id="L63">        HashMap&lt;City, AirQuality&gt; data = new HashMap&lt;&gt;();</span>
+    public Map&lt;City, AirQuality&gt; getRequestLatLng(Cache cache, String lat, String lng) {
+<span class="fc" id="L63">        LOGGER.log(Level.INFO, &quot;Getting Request ...&quot;);</span>
+<span class="fc" id="L64">        HashMap&lt;City, AirQuality&gt; data = new HashMap&lt;&gt;();</span>
 
         // Incr number os Request
-<span class="fc" id="L66">        requestsIncr();</span>
+<span class="fc" id="L67">        requestsIncr();</span>
 
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (City i : cache.getLastRequests().keySet()) {</span>
-<span class="pc bpc" id="L69" title="1 of 4 branches missed.">            if( i.getLat().equals(lat) &amp;&amp; i.getLng().equals(lng) ) {</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">                if ( hasExpired(i) ) {</span>
-<span class="fc" id="L71">                    LOGGER.log(Level.INFO, &quot;Expired ...&quot;);</span>
-<span class="fc" id="L72">                    removeExpiredRequest(i);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        for (City i : cache.getLastRequests().keySet()) {</span>
+<span class="pc bpc" id="L70" title="1 of 4 branches missed.">            if( i.getLat().equals(lat) &amp;&amp; i.getLng().equals(lng) ) {</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if ( hasExpired(i) ) {</span>
+<span class="fc" id="L72">                    LOGGER.log(Level.INFO, &quot;Expired ...&quot;);</span>
+<span class="fc" id="L73">                    removeExpiredRequest(i);</span>
                 } else {
-<span class="fc" id="L74">                    data.put(i, cache.getLastRequests().get(i));</span>
+<span class="fc" id="L75">                    data.put(i, cache.getLastRequests().get(i));</span>
 
-<span class="fc" id="L76">                    hitsIncr();</span>
-<span class="fc" id="L77">                    return data;</span>
+<span class="fc" id="L77">                    hitsIncr();</span>
+<span class="fc" id="L78">                    return data;</span>
                 }
             }
-<span class="fc" id="L80">        }</span>
+<span class="fc" id="L81">        }</span>
 
-<span class="fc" id="L82">        missesIncr();</span>
-<span class="fc" id="L83">        return data;</span>
+<span class="fc" id="L83">        missesIncr();</span>
+<span class="fc" id="L84">        return data;</span>
     }
 
-<span class="fc" id="L86">    public void requestsIncr() { numOfRequests++; }</span>
+<span class="fc" id="L87">    public void requestsIncr() { numOfRequests++; }</span>
 
-<span class="fc" id="L88">    public void hitsIncr() { numOfHits++; }</span>
+<span class="fc" id="L89">    public void hitsIncr() { numOfHits++; }</span>
 
-<span class="fc" id="L90">    public void missesIncr() { numOfMisses++; }</span>
+<span class="fc" id="L91">    public void missesIncr() { numOfMisses++; }</span>
 
     private boolean hasExpired(City city) {
-<span class="fc" id="L93">        Long expireTime = expiredRequests.get(city);</span>
+<span class="fc" id="L94">        Long expireTime = expiredRequests.get(city);</span>
 
-<span class="fc bfc" id="L95" title="All 2 branches covered.">        return System.currentTimeMillis() &gt; expireTime;</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        return System.currentTimeMillis() &gt; expireTime;</span>
     }
 
     private void removeExpiredRequest(City city) {
-<span class="fc" id="L99">        LOGGER.log(Level.INFO, &quot;Removing Expired Requests ...&quot;);</span>
+<span class="fc" id="L100">        LOGGER.log(Level.INFO, &quot;Removing Expired Requests ...&quot;);</span>
 
-<span class="fc" id="L101">        lastRequests.remove(city);</span>
-<span class="fc" id="L102">        expiredRequests.remove(city);</span>
+<span class="fc" id="L102">        lastRequests.remove(city);</span>
+<span class="fc" id="L103">        expiredRequests.remove(city);</span>
 
-<span class="fc" id="L104">        LOGGER.log(Level.INFO, &quot;Expired Requests Removed&quot;);</span>
-<span class="fc" id="L105">    }</span>
+<span class="fc" id="L105">        LOGGER.log(Level.INFO, &quot;Expired Requests Removed&quot;);</span>
+<span class="fc" id="L106">    }</span>
 
     public long getTimeToLive() {
-<span class="fc" id="L108">        return timeToLive;</span>
+<span class="fc" id="L109">        return timeToLive;</span>
     }
 
     public void setTimeToLive(long timeToLive) {
-<span class="fc" id="L112">        this.timeToLive = timeToLive;</span>
-<span class="fc" id="L113">    }</span>
+<span class="fc" id="L113">        this.timeToLive = timeToLive;</span>
+<span class="fc" id="L114">    }</span>
 
     public int getNumOfRequests() {
-<span class="fc" id="L116">        return numOfRequests;</span>
+<span class="fc" id="L117">        return numOfRequests;</span>
     }
 
     public void setNumOfRequests(int numOfRequests) {
-<span class="fc" id="L120">        this.numOfRequests = numOfRequests;</span>
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L121">        this.numOfRequests = numOfRequests;</span>
+<span class="fc" id="L122">    }</span>
 
     public int getNumOfHits() {
-<span class="fc" id="L124">        return numOfHits;</span>
+<span class="fc" id="L125">        return numOfHits;</span>
     }
 
     public void setNumOfHits(int numOfHits) {
-<span class="fc" id="L128">        this.numOfHits = numOfHits;</span>
-<span class="fc" id="L129">    }</span>
+<span class="fc" id="L129">        this.numOfHits = numOfHits;</span>
+<span class="fc" id="L130">    }</span>
 
     public int getNumOfMisses() {
-<span class="fc" id="L132">        return numOfMisses;</span>
+<span class="fc" id="L133">        return numOfMisses;</span>
     }
 
     public void setNumOfMisses(int numOfMisses) {
-<span class="fc" id="L136">        this.numOfMisses = numOfMisses;</span>
-<span class="fc" id="L137">    }</span>
+<span class="fc" id="L137">        this.numOfMisses = numOfMisses;</span>
+<span class="fc" id="L138">    }</span>
 
-    public HashMap&lt;City, AirQuality&gt; getLastRequests() {
-<span class="fc" id="L140">        return lastRequests;</span>
+    public Map&lt;City, AirQuality&gt; getLastRequests() {
+<span class="fc" id="L141">        return lastRequests;</span>
     }
 
-    public void setLastRequests(HashMap&lt;City, AirQuality&gt; cache) {
-<span class="fc" id="L144">        this.lastRequests = cache;</span>
-<span class="fc" id="L145">    }</span>
+    public void setLastRequests(Map&lt;City, AirQuality&gt; cache) {
+<span class="fc" id="L145">        this.lastRequests = cache;</span>
+<span class="fc" id="L146">    }</span>
 
-    public HashMap&lt;City, Long&gt; getExpiredRequests() {
-<span class="fc" id="L148">        return expiredRequests;</span>
+    public Map&lt;City, Long&gt; getExpiredRequests() {
+<span class="fc" id="L149">        return expiredRequests;</span>
     }
 
-    public void setExpiredRequests(HashMap&lt;City, Long&gt; expiredRequests) {
-<span class="fc" id="L152">        this.expiredRequests = expiredRequests;</span>
-<span class="fc" id="L153">    }</span>
+    public void setExpiredRequests(Map&lt;City, Long&gt; expiredRequests) {
+<span class="fc" id="L153">        this.expiredRequests = expiredRequests;</span>
+<span class="fc" id="L154">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

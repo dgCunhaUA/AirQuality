@@ -4,6 +4,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@WebMvcTest(AirQualityRestController.class)
+@WebMvcTest(AirQualityController.class)
 class AirQualityController_WithMockServiceTest {
 
     @Autowired
@@ -31,8 +32,8 @@ class AirQualityController_WithMockServiceTest {
     private AirQualityService airQualityService;
 
 
-    /*
-    //@Test
+
+    @Test
     void whenGetAirQualityByCityName_thenReturnData() throws Exception {
 
         AirQuality airQuality = new AirQuality();
@@ -53,42 +54,25 @@ class AirQualityController_WithMockServiceTest {
         HashMap<City, AirQuality> response = new HashMap<>();
         response.put(cityObj, airQuality);
 
+
         when(airQualityService.getCurrentAirQualityByCity("Viseu")).thenReturn(response);
 
-        //TODO: Erro ao fazer get
-        City testeCity = new City();
-        testeCity.setName("\"Viseu\"");
 
-        /*mvc.perform(get("/air-quality")
-                .contentType(MediaType.APPLICATION_JSON)
-                .flashAttr("city", testeCity))
-                .andExpect(status().isOk())
-                .andExpect(view().name("results"));
-
-
-        //TODO:
-        mvc.perform(get("/air-quality").contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("name", "Viseu")
-                )
-                .andExpect(status().isOk());
-
-        verify(airQualityService, times(1)).getCurrentAirQualityByCity("Viseu");
-
-        /*
-        mvc.perform(post("/air-quality").contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("name", "Viseu"))
-                .andDo( print())
+        mvc.perform(get("/air-quality?name=Viseu").contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("city", Matchers.<City>
-                        hasProperty("name", containsString("Viseu"))));
+                        hasProperty("name", containsString("Viseu"))))
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("lat", containsString("40.661"))))
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("lng", containsString("-7.9097"))))
+                .andExpect(view().name("results"));
 
+        verify(airQualityService, times(1)).getCurrentAirQualityByCity("Viseu");
     }
-   */
 
 
-
-    //@Test
-    /*
+    @Test
     void whenGetAirQualityByWrongCityName_thenReturnData() throws Exception {
 
         AirQuality airQuality = new AirQuality();
@@ -109,17 +93,98 @@ class AirQualityController_WithMockServiceTest {
         HashMap<City, AirQuality> response = new HashMap<>();
         response.put(cityObj, airQuality);
 
-        when( airQualityService.getCurrentAirQualityByCity("Viseu") ).thenReturn(response);
+        when( airQualityService.getCurrentAirQualityByCity("WrongName") ).thenReturn(response);
 
 
-        //TODO:
-        mvc.perform(get("/air-quality?name=x;zx'zw").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/air-quality?name=WrongName").contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"City{name='City Not Found', country='-', lat='-', lng='-', postalCode='-'}\":{\"co\":\"-\",\"no2\":\"-\",\"ozone\":\"-\",\"pm10\":\"-\",\"pm25\":\"-\",\"so2\":\"-\"}}")
-                );
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("name", containsString("City Not Found"))))
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("lat", containsString("-"))))
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("lng", containsString("-"))))
+                .andExpect(view().name("results"));
 
+        verify(airQualityService, times(1)).getCurrentAirQualityByCity("WrongName");
     }
 
-     */
 
+
+    @Test
+    void whenGetAirQualityByLatLng_thenReturnData() throws Exception {
+
+        AirQuality airQuality = new AirQuality();
+        airQuality.setCO("0.20208333333333334");
+        airQuality.setNO2("7.836");
+        airQuality.setOZONE("3.449");
+        airQuality.setPM10("24.814");
+        airQuality.setPM25("6.8");
+        airQuality.setSO2("3.384");
+
+        City cityObj = new City();
+        cityObj.setName("\"Viseu\"");
+        cityObj.setCountry("\"PT\"");
+        cityObj.setLat("40.661");
+        cityObj.setLng("-7.9097");
+        cityObj.setPostalCode("\"3500-004\"");
+
+        HashMap<City, AirQuality> response = new HashMap<>();
+        response.put(cityObj, airQuality);
+
+
+        when( airQualityService.getCurrentAirQualityByLatLng("40.661", "-7.9097") ).thenReturn(response);
+
+
+        mvc.perform(get("/air-quality-lat-lng?lat=40.661&lng=-7.9097").contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("name", containsString("Viseu"))))
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("lat", containsString("40.661"))))
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("lng", containsString("-7.9097"))))
+                .andExpect(view().name("results"));
+
+        verify(airQualityService, times(1)).getCurrentAirQualityByLatLng("40.661", "-7.9097");
+    }
+
+    @Test
+    void whenGetAirQualityByInvalidLatLng_thenReturnData() throws Exception {
+
+        AirQuality airQuality = new AirQuality();
+        airQuality.setCO("-");
+        airQuality.setNO2("-");
+        airQuality.setOZONE("-");
+        airQuality.setPM10("-");
+        airQuality.setPM25("-");
+        airQuality.setSO2("-");
+
+        City cityObj = new City();
+        cityObj.setName("City Not Found");
+        cityObj.setPostalCode("-");
+        cityObj.setCountry("-");
+        cityObj.setLat("-");
+        cityObj.setLng("-");
+
+        HashMap<City, AirQuality> response = new HashMap<>();
+        response.put(cityObj, airQuality);
+
+
+        when( airQualityService.getCurrentAirQualityByLatLng("--", "----") ).thenReturn(response);
+
+
+        mvc.perform(get("/air-quality-lat-lng?lat=--&lng=----").contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("name", containsString("City Not Found"))))
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("lat", containsString("-"))))
+                .andExpect(model().attribute("city", Matchers.<City>
+                        hasProperty("lng", containsString("-"))))
+                .andExpect(view().name("results"));
+
+
+        verify(airQualityService, times(1)).getCurrentAirQualityByLatLng("--", "----");
+    }
 }

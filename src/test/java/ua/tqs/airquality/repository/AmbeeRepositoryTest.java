@@ -27,6 +27,19 @@ class AmbeeRepositoryTest {
     void whenGetInvalidCityNameAirQuality_thenReturnError() throws IOException, InterruptedException {
         String invalidCityName = "-z;'qy-0)x";
         assertThat( ambeeRepository.getCurrentAirQualityByCity(invalidCityName) ).isInstanceOf(String.class);
-        assertEquals( ambeeRepository.getCurrentAirQualityByCity(invalidCityName), "{\"message\":\"Error\"}" );
+        assertEquals( "{\"message\":\"Error\"}", ambeeRepository.getCurrentAirQualityByCity(invalidCityName) );
+    }
+
+    @Test
+    void whenGetCityAirQualityByLatLng_thenReturnAirQuality() throws IOException, InterruptedException {
+        assertThat( ambeeRepository.getCurrentAirQualityByLatLng("---", "---") ).isInstanceOf(String.class);
+    }
+
+    @Test
+    void whenGetAirQualityByInvalidLatLng_thenReturnError() throws IOException, InterruptedException {
+        String invalidCityLat = "-z;'qy-0)x";
+        String invalidCityLng = "----";
+        assertThat( ambeeRepository.getCurrentAirQualityByLatLng(invalidCityLat, invalidCityLng) ).isInstanceOf(String.class);
+        assertEquals( "{\"message\":\"Error\"}", ambeeRepository.getCurrentAirQualityByLatLng(invalidCityLat, invalidCityLng) );
     }
 }

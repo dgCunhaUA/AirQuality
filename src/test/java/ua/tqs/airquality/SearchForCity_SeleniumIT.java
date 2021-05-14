@@ -1,6 +1,7 @@
 package ua.tqs.airquality;
 
 import io.cucumber.java.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-class SearchForCity_Selenium {
+class SearchForCity_SeleniumIT {
 
     WebDriver driver;
 
@@ -29,7 +30,7 @@ class SearchForCity_Selenium {
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         driver.quit();
     }

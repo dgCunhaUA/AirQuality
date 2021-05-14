@@ -4,6 +4,7 @@ import ua.tqs.airquality.model.AirQuality;
 import ua.tqs.airquality.model.City;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,13 +14,13 @@ public class Cache {
     private int numOfRequests = 0;
     private int numOfHits = 0;
     private int numOfMisses = 0;
-    private HashMap<City, AirQuality> lastRequests ;
-    private HashMap<City, Long> expiredRequests ;
+    private Map<City, AirQuality> lastRequests ;
+    private Map<City, Long> expiredRequests ;
 
-    private final static Logger LOGGER =  Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger LOGGER =  Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public Cache(long expireTime) {
-        this.lastRequests = new HashMap<City, AirQuality>();
+        this.lastRequests = new HashMap<>();
         this.expiredRequests = new HashMap<>();
         this.timeToLive = expireTime;
     }
@@ -32,7 +33,7 @@ public class Cache {
         LOGGER.log(Level.INFO, "Requests stored");
     }
 
-    public HashMap<City, AirQuality> getRequest(Cache cache, String city) {
+    public Map<City, AirQuality> getRequest(Cache cache, String city) {
         LOGGER.log(Level.INFO, "Getting Request ...");
         HashMap<City, AirQuality> data = new HashMap<>();
 
@@ -58,7 +59,7 @@ public class Cache {
         return data;
     }
 
-    public HashMap<City, AirQuality> getRequestLatLng(Cache cache, String lat, String lng) {
+    public Map<City, AirQuality> getRequestLatLng(Cache cache, String lat, String lng) {
         LOGGER.log(Level.INFO, "Getting Request ...");
         HashMap<City, AirQuality> data = new HashMap<>();
 
@@ -136,19 +137,19 @@ public class Cache {
         this.numOfMisses = numOfMisses;
     }
 
-    public HashMap<City, AirQuality> getLastRequests() {
+    public Map<City, AirQuality> getLastRequests() {
         return lastRequests;
     }
 
-    public void setLastRequests(HashMap<City, AirQuality> cache) {
+    public void setLastRequests(Map<City, AirQuality> cache) {
         this.lastRequests = cache;
     }
 
-    public HashMap<City, Long> getExpiredRequests() {
+    public Map<City, Long> getExpiredRequests() {
         return expiredRequests;
     }
 
-    public void setExpiredRequests(HashMap<City, Long> expiredRequests) {
+    public void setExpiredRequests(Map<City, Long> expiredRequests) {
         this.expiredRequests = expiredRequests;
     }
 }

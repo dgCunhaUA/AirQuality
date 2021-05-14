@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ua.tqs.airquality.repository.AmbeeRepositoryTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.27 s - in ua.tqs.airquality.repository.AmbeeRepositoryTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.58 s - in ua.tqs.airquality.repository.AmbeeRepositoryTest

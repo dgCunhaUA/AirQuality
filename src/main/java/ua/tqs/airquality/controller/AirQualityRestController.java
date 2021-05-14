@@ -9,7 +9,7 @@ import ua.tqs.airquality.model.City;
 import ua.tqs.airquality.service.AirQualityService;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -26,20 +26,20 @@ public class AirQualityRestController {
 
 
     @GetMapping("/air-quality/{city}")
-    public HashMap<City, AirQuality> getAirQualityByCity(@PathVariable("city") String city) throws IOException, InterruptedException {
+    public Map<City, AirQuality> getAirQualityByCity(@PathVariable("city") String city) throws IOException, InterruptedException {
         logger.log(Level.INFO, "External API Request");
-        HashMap<City, AirQuality> response = airQualityService.getCurrentAirQualityByCity(city);
-        logger.log(Level.INFO, response.toString());
+        Map<City, AirQuality> response = airQualityService.getCurrentAirQualityByCity(city);
+        logger.log(Level.INFO, "Response: {0}", response);
 
         return response;
     }
 
-    @RequestMapping(value = "/air-quality-lat-lng", method = RequestMethod.GET)
-    public HashMap<City, AirQuality> getAirQualityByLatLng( @RequestParam(value = "lat", required = false) String lat, @RequestParam(value = "lng", required = false) String lng, Model model) throws IOException, InterruptedException {
-        logger.log(Level.INFO, "Get city lat and lng to search for airquality: " + lat + " - " + lng);
+    @GetMapping(value = "/air-quality-lat-lng")
+    public Map<City, AirQuality> getAirQualityByLatLng(@RequestParam(value = "lat", required = false) String lat, @RequestParam(value = "lng", required = false) String lng, Model model) throws IOException, InterruptedException {
+        logger.log(Level.INFO, () -> "Get city lat and lng to search for airquality: " + lat + " - " + lng);
 
-        HashMap<City, AirQuality> response = airQualityService.getCurrentAirQualityByLatLng(lat, lng);
-        logger.log(Level.INFO, "Response: " + response.toString());
+        Map<City, AirQuality> response = airQualityService.getCurrentAirQualityByLatLng(lat, lng);
+        logger.log(Level.INFO, "Response: {0}", response);
 
         return response;
     }
