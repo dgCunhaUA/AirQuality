@@ -27,7 +27,7 @@
         <project.build.sourceEncoding>${project.encondig}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${project.encondig}</project.reporting.outputEncoding>
 
-        <sonar.projectKey>dgCunhaUA_TQS</sonar.projectKey>
+        <sonar.projectKey>dgCunhaUA_AirQuality</sonar.projectKey>
         <sonar.organization>dgcunhaua</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
