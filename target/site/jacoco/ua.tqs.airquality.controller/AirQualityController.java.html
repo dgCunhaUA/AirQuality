@@ -34,38 +34,36 @@ import java.util.logging.Logger;
 
     @GetMapping(&quot;/air-quality&quot;)
     public String getAirQualityByCityName(@ModelAttribute City city, Model model) throws IOException, InterruptedException {
-<span class="fc" id="L37">        logger.log(Level.INFO, &quot;Get city name to search for airquality: {0}&quot;, city);</span>
 
-<span class="fc" id="L39">        logger.log(Level.INFO, &quot;External API Request for {0}&quot;, city.getName());</span>
-<span class="fc" id="L40">        Map&lt;City, AirQuality&gt; response = airQualityService.getCurrentAirQualityByCity(city.getName());</span>
-<span class="fc" id="L41">        logger.log(Level.INFO, &quot;Response: {0}&quot;, response);</span>
+<span class="fc" id="L38">        logger.log(Level.INFO, &quot;Getting current air quality city by name ...&quot;);</span>
+<span class="fc" id="L39">        Map&lt;City, AirQuality&gt; response = airQualityService.getCurrentAirQualityByCity(city.getName());</span>
+<span class="fc" id="L40">        logger.log(Level.INFO, &quot;Response: {0}&quot;, response);</span>
 
-<span class="fc" id="L43">        Map.Entry&lt;City, AirQuality&gt; entry = response.entrySet().iterator().next();</span>
+<span class="fc" id="L42">        Map.Entry&lt;City, AirQuality&gt; entry = response.entrySet().iterator().next();</span>
 
-<span class="fc" id="L45">        logger.log(Level.INFO, () -&gt; &quot;Return template, infos: &quot; + entry.getKey().toString() + entry.getValue().toString());</span>
-<span class="fc" id="L46">        model.addAttribute(&quot;airQuality&quot;, entry.getValue());</span>
-<span class="fc" id="L47">        model.addAttribute(&quot;city&quot;, entry.getKey());</span>
+<span class="fc" id="L44">        logger.log(Level.INFO, () -&gt; &quot;Return template, infos: &quot; + entry.getKey().toString() + entry.getValue().toString());</span>
+<span class="fc" id="L45">        model.addAttribute(&quot;airQuality&quot;, entry.getValue());</span>
+<span class="fc" id="L46">        model.addAttribute(&quot;city&quot;, entry.getKey());</span>
 
-<span class="fc" id="L49">        return resultsTemplate;</span>
+<span class="fc" id="L48">        return resultsTemplate;</span>
     }
 
 
     @GetMapping(&quot;/air-quality-lat-lng&quot;)
     public String getAirQualityByLatLng(@ModelAttribute City city, Model model) throws IOException, InterruptedException {
-<span class="fc" id="L55">        logger.log(Level.INFO, () -&gt; &quot;Get city lat and lng to search for airquality: &quot; + city.getLat() + &quot; - &quot; + city.getLng());</span>
 
-<span class="fc" id="L57">        logger.log(Level.INFO, &quot;External API Request for {0}&quot;, city.getName());</span>
-<span class="fc" id="L58">        Map&lt;City, AirQuality&gt; response = airQualityService.getCurrentAirQualityByLatLng(city.getLat(), city.getLng());</span>
-<span class="fc" id="L59">        logger.log(Level.INFO, &quot;Response: {0}&quot;, response);</span>
+<span class="fc" id="L55">        logger.log(Level.INFO, &quot;Getting current air quality city by coords ...&quot;);</span>
+<span class="fc" id="L56">        Map&lt;City, AirQuality&gt; response = airQualityService.getCurrentAirQualityByLatLng(city.getLat(), city.getLng());</span>
+<span class="fc" id="L57">        logger.log(Level.INFO, &quot;Response: {0}&quot;, response);</span>
 
 
-<span class="fc" id="L62">        Map.Entry&lt;City, AirQuality&gt; entry = response.entrySet().iterator().next();</span>
+<span class="fc" id="L60">        Map.Entry&lt;City, AirQuality&gt; entry = response.entrySet().iterator().next();</span>
 
-<span class="fc" id="L64">        logger.log(Level.INFO, () -&gt; &quot;Return template, infos: &quot; + entry.getKey().toString() + entry.getValue().toString());</span>
-<span class="fc" id="L65">        model.addAttribute(&quot;airQuality&quot;, entry.getValue());</span>
-<span class="fc" id="L66">        model.addAttribute(&quot;city&quot;, entry.getKey());</span>
+<span class="fc" id="L62">        logger.log(Level.INFO, () -&gt; &quot;Return template, infos: &quot; + entry.getKey().toString() + entry.getValue().toString());</span>
+<span class="fc" id="L63">        model.addAttribute(&quot;airQuality&quot;, entry.getValue());</span>
+<span class="fc" id="L64">        model.addAttribute(&quot;city&quot;, entry.getKey());</span>
 
-<span class="fc" id="L68">        return resultsTemplate;</span>
+<span class="fc" id="L66">        return resultsTemplate;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

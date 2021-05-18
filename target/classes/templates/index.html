@@ -28,7 +28,7 @@
       <hr>
 
       <form th:action="@{/air-quality-lat-lng}" th:object="${city}" method="get">
-          <h2 class="search-text"> Procurar por Lat e Lng </h2>
+          <h2 class="search-text"> Procurar por Latitude e Longitude </h2>
 
           <label for="cityLat"></label><input placeholder="Latitude" id="cityLat" name="lat" th:value="${city.lat}" class="input"/>
           <label for="cityLng"></label><input placeholder="Longitude" id="cityLng" name="lng" th:value="${city.lng}" class="input"/>

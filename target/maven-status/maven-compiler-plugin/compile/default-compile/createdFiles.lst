@@ -1,8 +1,9 @@
 ua/tqs/airquality/model/AirQuality.class
 ua/tqs/airquality/controller/AirQualityRestController.class
 ua/tqs/airquality/repository/AmbeeRepository.class
+ua/tqs/airquality/SwaggerConfig.class
+ua/tqs/airquality/AirqualityApplication.class
+ua/tqs/airquality/controller/AirQualityController.class
 ua/tqs/airquality/cache/Cache.class
 ua/tqs/airquality/model/City.class
-ua/tqs/airquality/AirqualityApplication.class
 ua/tqs/airquality/service/AirQualityService.class
-ua/tqs/airquality/controller/AirQualityController.class

@@ -92,7 +92,6 @@ class AirQualityRestController_WithMockServiceTest {
         verify(airQualityService, times(1)).getCurrentAirQualityByCity("Errorrrrr");
     }
 
-    //TODO: get por lat e lng
     @Test
     void whenGetAirQualityByLatLng_thenReturnData( ) throws Exception {
 

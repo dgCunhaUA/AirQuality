@@ -70,6 +70,7 @@ class SearchForCity_SeleniumIT {
 
         assertThat(driver.findElement(By.cssSelector(".title")).getText(), is("AirQuality WebPage"));
         assertThat(driver.findElement(By.cssSelector(".search-text")).getText(), is("Procurar por Cidade"));
+        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Latitude e Longitude"));
 
         driver.findElement(By.id("cityName")).click();
         driver.findElement(By.id("cityName")).sendKeys("xyzwklxzzzzz");
@@ -87,7 +88,7 @@ class SearchForCity_SeleniumIT {
         driver.findElement(By.linkText("Voltar")).click();
         assertThat(driver.findElement(By.cssSelector(".title")).getText(), is("AirQuality WebPage"));
         assertThat(driver.findElement(By.cssSelector("form:nth-child(1) > .search-text")).getText(), is("Procurar por Cidade"));
-        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Lat e Lng"));
+        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Latitude e Longitude"));
     }
 
 
@@ -98,7 +99,7 @@ class SearchForCity_SeleniumIT {
 
         assertThat(driver.findElement(By.cssSelector(".title")).getText(), is("AirQuality WebPage"));
         assertThat(driver.findElement(By.cssSelector("form:nth-child(1) > .search-text")).getText(), is("Procurar por Cidade"));
-        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Lat e Lng"));
+        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Latitude e Longitude"));
 
         driver.findElement(By.id("cityLat")).click();
         driver.findElement(By.id("cityLat")).sendKeys("40.661");
@@ -116,7 +117,7 @@ class SearchForCity_SeleniumIT {
         driver.findElement(By.linkText("Voltar")).click();
         assertThat(driver.findElement(By.cssSelector(".title")).getText(), is("AirQuality WebPage"));
         assertThat(driver.findElement(By.cssSelector("form:nth-child(1) > .search-text")).getText(), is("Procurar por Cidade"));
-        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Lat e Lng"));
+        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Latitude e Longitude"));
     }
 
 
@@ -128,7 +129,7 @@ class SearchForCity_SeleniumIT {
 
         assertThat(driver.findElement(By.cssSelector(".title")).getText(), is("AirQuality WebPage"));
         assertThat(driver.findElement(By.cssSelector("form:nth-child(1) > .search-text")).getText(), is("Procurar por Cidade"));
-        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Lat e Lng"));
+        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Latitude e Longitude"));
 
         driver.findElement(By.id("cityLat")).click();
         driver.findElement(By.id("cityLat")).sendKeys("1234");
@@ -146,6 +147,6 @@ class SearchForCity_SeleniumIT {
         driver.findElement(By.linkText("Voltar")).click();
         assertThat(driver.findElement(By.cssSelector(".title")).getText(), is("AirQuality WebPage"));
         assertThat(driver.findElement(By.cssSelector("form:nth-child(1) > .search-text")).getText(), is("Procurar por Cidade"));
-        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Lat e Lng"));
+        assertThat(driver.findElement(By.cssSelector("form:nth-child(3) > .search-text")).getText(), is("Procurar por Latitude e Longitude"));
     }
 }
